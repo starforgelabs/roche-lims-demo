@@ -104,6 +104,15 @@ namespace LIMSDemo
             return IsLastResultSuccessful;
         }
 
+        public bool ExportExperiment(string aExperimentName, string aFilename)
+        {
+            if (!EnsureConnected()) return false;
+
+            _lastResult = _connection.ExperimentInfo.ExportExperiment(aExperimentName, aFilename);
+
+            return IsLastResultSuccessful;
+        }
+
         public bool GetContainerBarcode(out string aBarcode)
         {
             aBarcode = string.Empty;
