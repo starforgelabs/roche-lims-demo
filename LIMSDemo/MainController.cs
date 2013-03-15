@@ -306,6 +306,8 @@ namespace LIMSDemo
             bool lIsConnected = _lims.IsConnected;
             bool lIsResserved = _lims.IsReserved;
 
+            // Connection and login boxes
+            //
             _view.btnAcquire.IsEnabled = !lIsLoaded;
             _view.btnRelease.IsEnabled = lIsLoaded && !lIsConnected;
             _view.txtHostname.IsEnabled = lIsLoaded && !lIsConnected;
@@ -314,6 +316,9 @@ namespace LIMSDemo
             _view.btnConnect.IsEnabled = lIsLoaded && !lIsConnected;
             _view.btnDisconnect.IsEnabled = lIsConnected;
 
+            //
+            // Instrument, run &c. boxes
+            //
             _view.btnReserve.IsEnabled = lIsConnected;
             _view.btnUnreserve.IsEnabled = lIsConnected;
 
@@ -326,15 +331,35 @@ namespace LIMSDemo
             _view.btnStartRun.IsEnabled = lIsResserved;
             _view.btnAbortRun.IsEnabled = lIsResserved;
 
+            //
+            // Query box
+            //
             _view.txtQueryName.IsEnabled = lIsConnected;
             _view.txtQueryType.IsEnabled = lIsConnected;
             _view.txtQueryOwner.IsEnabled = lIsConnected;
             _view.rbQueryDateAll.IsEnabled = lIsConnected;
             _view.rbQueryDateModified.IsEnabled = lIsConnected;
             _view.rbQueryDateCreated.IsEnabled = lIsConnected;
+
+            _view.cbDateCreatedStartDay.IsEnabled = lIsConnected;
+            _view.cbDateCreatedStartMonth.IsEnabled = lIsConnected;
+            _view.cbDateCreatedStartYear.IsEnabled = lIsConnected;
+            _view.cbDateCreatedStopDay.IsEnabled = lIsConnected;
+            _view.cbDateCreatedStopMonth.IsEnabled = lIsConnected;
+            _view.cbDateCreatedStopYear.IsEnabled = lIsConnected;
+            _view.cbDateModifiedStartDay.IsEnabled = lIsConnected;
+            _view.cbDateModifiedStartMonth.IsEnabled = lIsConnected;
+            _view.cbDateModifiedStartYear.IsEnabled = lIsConnected;
+            _view.cbDateModifiedStopDay.IsEnabled = lIsConnected;
+            _view.cbDateModifiedStopMonth.IsEnabled = lIsConnected;
+            _view.cbDateModifiedStopYear.IsEnabled = lIsConnected;
+
             _view.btnQueryClear.IsEnabled = lIsConnected;
             _view.btnExecuteQuery.IsEnabled = lIsConnected;
 
+            //
+            // Experiment box
+            //
             _view.txtExperimentName.IsEnabled = lIsConnected;
             _view.btnExperimentStatus.IsEnabled = lIsConnected;
             _view.btnExperimentSummary.IsEnabled = lIsConnected;

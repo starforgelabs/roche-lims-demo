@@ -88,18 +88,19 @@ namespace LIMSDemo
             LIMSQueryResult lQueryResult;
             _lastResult = _connection.Query.ExecuteQuery(out lQueryResult);
 
-            for (var i = 0; i < lQueryResult.Count; i++)
-            {
-                var lItem = lQueryResult.GetResultData(i);
-                aResults.Add(new QueryResult
-                    {
-                        Name=lItem.Name, 
-                        Path=lItem.Path, 
-                        ObjectType=lItem.ObjectType, 
-                        Created=lItem.CreationDate, 
-                        Modified=lItem.ModificationDate
-                    });
-            }
+            if(lQueryResult != null)
+                for (var i = 0; i < lQueryResult.Count; i++)
+                {
+                    var lItem = lQueryResult.GetResultData(i);
+                    aResults.Add(new QueryResult
+                        {
+                            Name=lItem.Name, 
+                            Path=lItem.Path, 
+                            ObjectType=lItem.ObjectType, 
+                            Created=lItem.CreationDate, 
+                            Modified=lItem.ModificationDate
+                        });
+                }
 
             return IsLastResultSuccessful;
         }
