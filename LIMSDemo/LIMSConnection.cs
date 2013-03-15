@@ -204,6 +204,19 @@ namespace LIMSDemo
             return IsLastResultSuccessful;
         }
 
+        public bool StartRun(NewRun aRun)
+        {
+            if (aRun == null) return false;
+            if (!EnsureConnected()) return false;
+
+            _lastResult = _connection.Instrument.StartExperiment(aRun.ExperimentName, 
+                                                                 aRun.ContainerBarcode,
+                                                                 aRun.MacroName, 
+                                                                 null);
+
+            return IsLastResultSuccessful;
+        }
+
         public void UnloadLibrary()
         {
             _connection = null;

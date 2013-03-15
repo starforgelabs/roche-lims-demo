@@ -15,7 +15,7 @@ namespace LIMSDemo
 
         private readonly IMainController _controller;
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closing(object aSender, System.ComponentModel.CancelEventArgs aEventArgs)
         {
             _controller.Terminate();
         }
@@ -93,6 +93,11 @@ namespace LIMSDemo
         private void btnReserve_Click(object aSender, RoutedEventArgs aEventArgs)
         {
             _controller.ReserveInstrument();
+        }
+
+        private void btnStartRun_Click(object aSender, RoutedEventArgs aEventArgs)
+        {
+            _controller.StartRun();
         }
 
         private void btnStatus_Click(object aSender, RoutedEventArgs aEventArgs)

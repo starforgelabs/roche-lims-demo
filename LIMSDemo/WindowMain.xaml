@@ -52,7 +52,7 @@
                 <GroupBox DockPanel.Dock="Top" Header="Run">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Left">
-                            <Button Margin="4" DockPanel.Dock="Top" Name="btnStartRun">Start Run</Button>
+                            <Button Margin="4" DockPanel.Dock="Top" Name="btnStartRun" Click="btnStartRun_Click">Start Run</Button>
                             <Button Margin="4" DockPanel.Dock="Top" Name="btnAbortRun" Click="btnAbortRun_Click">Abort Run</Button>
                         </DockPanel>
                     </DockPanel>

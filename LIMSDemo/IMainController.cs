@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace LIMSDemo
+﻿namespace LIMSDemo
 {
+    //
+    // This is to provide a callback that the main form can use to communicate back to the controller. 
+    //
     public interface IMainController
     {
         void AbortRun();
@@ -38,6 +36,8 @@ namespace LIMSDemo
         void ReleaseLibrary();
 
         void ReserveInstrument();
+
+        void StartRun();
 
         void Terminate();
 

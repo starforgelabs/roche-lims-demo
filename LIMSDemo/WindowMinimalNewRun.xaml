@@ -1,0 +1,21 @@
+﻿<Window x:Class="LIMSDemo.WindowMinimalNewRun"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="New Run" Height="206" Width="243" WindowStartupLocation="CenterOwner"  
+    FocusManager.FocusedElement="{Binding ElementName=txtExperimentName}">
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Bottom">
+            <TextBlock DockPanel.Dock="Top" Foreground="Red" Margin="8">All fields are required.</TextBlock>
+            <Button DockPanel.Dock="Right" IsCancel="True" Click="Button_Click">Cancel</Button>
+            <Button DockPanel.Dock="Right" IsDefault="True" Name="btnOK" IsEnabled="False" Click="btnOK_Click">OK</Button>
+            <TextBlock />
+        </DockPanel>
+        <TextBlock DockPanel.Dock="Top" >Experiment Name</TextBlock>
+        <TextBox Name="txtExperimentName"  DockPanel.Dock="Top" TextChanged="ActionTextChanged"></TextBox>
+        <TextBlock DockPanel.Dock="Top" >Container Barcode</TextBlock>
+        <TextBox Name="txtContainerBarcode" DockPanel.Dock="Top" TextChanged="ActionTextChanged"></TextBox>
+        <TextBlock DockPanel.Dock="Top" >Macro Name</TextBlock>
+        <TextBox Name="txtMacroName" DockPanel.Dock="Top" TextChanged="ActionTextChanged"></TextBox>
+                 <TextBlock />
+    </DockPanel>
+</Window>

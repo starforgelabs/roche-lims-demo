@@ -89,6 +89,8 @@ namespace LIMSDemo
         {
             if (_model.HasLastResult)
                 Display(_model.LastResult.Message + "\r\n" + _model.LastResult.UserMessage);
+            else
+                Display("No last result information available.");
         }
 
         public void ExperimentStatus()
@@ -311,6 +313,24 @@ namespace LIMSDemo
                 DisplayLastStatus();
 
             UpdateControls();
+        }
+
+        public void StartRun()
+        {
+            if (!_model.IsReserved)
+            {
+                Display("Instrument must be reserved first.");
+                return;
+            }
+
+            var lNewExperimentController = new NewRunController(_view);
+            NewRun lNewExperiment;
+            if (!lNewExperimentController.GetMinimalNewExperiment(out lNewExperiment)) return;
+
+            if (_model.StartRun(lNewExperiment))
+                Display("Request to start a new run successful.");
+            else
+                DisplayLastStatus();
         }
 
         public void Terminate()
