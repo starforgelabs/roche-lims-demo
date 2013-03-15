@@ -1,0 +1,117 @@
+﻿<Window x:Class="LIMSDemo.WindowMain"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="LIMS COM Demo" Height="483" Width="922">
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Top">
+            <DockPanel DockPanel.Dock="Left">
+                <GroupBox DockPanel.Dock="Top" Header="Activate COM Object" Name="gbCOM">
+                    <DockPanel>
+                        <Button Margin="4" DockPanel.Dock="Top" Name="btnAcquire" Click="btnAcquire_Click">Acquire</Button>
+                        <Button Margin="4" DockPanel.Dock="Top" Name="btnRelease" Click="btnRelease_Click">Release</Button>
+                    </DockPanel>
+                </GroupBox>
+                <GroupBox DockPanel.Dock="Top" Header="Connect to LIMS System" Name="gbLIMS">
+                    <DockPanel>
+                        <TextBlock Margin="4" DockPanel.Dock="Top">Host Name</TextBlock>
+                        <TextBox Margin="4" DockPanel.Dock="Top" Name="txtHostname">10.0.6.67</TextBox>
+                        <TextBlock Margin="4" DockPanel.Dock="Top">User Name</TextBlock>
+                        <TextBox Margin="4" DockPanel.Dock="Top" Name="txtUsername">admin</TextBox>
+                        <TextBlock Margin="4" DockPanel.Dock="Top">Password</TextBlock>
+                        <PasswordBox PasswordChar="*" Margin="4" DockPanel.Dock="Top" Name="txtPassword"></PasswordBox>
+                        <Button Margin="4" DockPanel.Dock="Top" Name="btnConnect" Click="btnConnect_Click">Connect</Button>
+                        <Button Margin="4" DockPanel.Dock="Top" Name="btnDisconnect" Click="btnDisconnect_Click">Disconnect</Button>
+                        <TextBlock/>
+                    </DockPanel>
+                </GroupBox>
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Left">
+            <GroupBox DockPanel.Dock="Top" Header="Instrument">
+                <DockPanel>
+                    <DockPanel DockPanel.Dock="Left">
+                        <Button Margin="4" DockPanel.Dock="Top" Name="btnReserve" Click="btnReserve_Click">Reserve</Button>
+                        <Button Margin="4" DockPanel.Dock="Top" Name="btnUnreserve" Click="btnUnreserve_Click">Unreserve</Button>
+                        <Button Margin="4" DockPanel.Dock="Top" Name="btnOpenDoor" Click="btnOpenDoor_Click">Open Door</Button>
+                        <Button Margin="4" DockPanel.Dock="Top" Name="btnCloseDoor" Click="btnCloseDoor_Click">Close Door</Button>
+                    </DockPanel>
+                </DockPanel>
+            </GroupBox>
+                <GroupBox DockPanel.Dock="Top" Header="Information">
+                    <DockPanel>
+                        <DockPanel DockPanel.Dock="Left">
+                            <Button Margin="4" DockPanel.Dock="Top" Name="btnStatus" Click="btnStatus_Click">Status</Button>
+                            <Button Margin="4" DockPanel.Dock="Top" Name="btnContainerBarcode" Click="btnContainerBarcode_Click">Container Barcode</Button>
+                            <Button Margin="4" DockPanel.Dock="Top" Name="btnGetSensor" Click="btnGetSensor_Click">Get Sensor</Button>
+                            <Button Margin="4" DockPanel.Dock="Top" Name="btnToggleSensor" Click="btnToggleSensor_Click">Toggle Sensor</Button>
+                            <TextBlock />
+                        </DockPanel>
+                    </DockPanel>
+                </GroupBox>
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Left">
+                <GroupBox DockPanel.Dock="Top" Header="Run">
+                    <DockPanel>
+                        <DockPanel DockPanel.Dock="Left">
+                            <Button Margin="4" DockPanel.Dock="Top" Name="btnStartRun">Start Run</Button>
+                            <Button Margin="4" DockPanel.Dock="Top" Name="btnAbortRun" Click="btnAbortRun_Click">Abort Run</Button>
+                        </DockPanel>
+                    </DockPanel>
+                </GroupBox>
+                <GroupBox DockPanel.Dock="Top" Header="Experiment">
+                    <DockPanel>
+                            <TextBlock Margin="4" DockPanel.Dock="Top">Experiment Name</TextBlock>
+                            <TextBox Margin="4" DockPanel.Dock="Top" Name="txtExperimentName" MaxWidth="192">/Roche/Experiments/Demo Experiments/Demo Absolute Quantification</TextBox>
+                            <Button Margin="4" DockPanel.Dock="Top" Name="btnExperimentStatus" Click="btnExperimentStatus_Click">Status</Button>
+                            <Button Margin="4" DockPanel.Dock="Top" Name="btnExperimentSummary" Click="btnExperimentSummary_Click">Summary</Button>
+                            <Button Margin="4" DockPanel.Dock="Top"  Name="btnExperimentExport" Click="btnExperimentExport_Click">Export</Button>
+                            <TextBlock />
+                    </DockPanel>
+                </GroupBox>
+            </DockPanel>
+            <GroupBox Header="Query">
+                <DockPanel>
+                    <TextBlock Margin="4" DockPanel.Dock="Top">Name</TextBlock>
+                    <TextBox Margin="4" DockPanel.Dock="Top" Name="txtQueryName"></TextBox>
+                    <TextBlock Margin="4" DockPanel.Dock="Top">Type</TextBlock>
+                    <TextBox Margin="4" DockPanel.Dock="Top" Name="txtQueryType"></TextBox>
+                    <TextBlock Margin="4" DockPanel.Dock="Top">Owner</TextBlock>
+                    <TextBox Margin="4" DockPanel.Dock="Top" Name="txtQueryOwner"></TextBox>
+                    <GroupBox DockPanel.Dock="Top" Header="Dates">
+                        <StackPanel>
+                            <RadioButton Margin="4" Name="rbQueryDateAll" IsChecked="True" GroupName="Query Dates">All</RadioButton>
+                            <DockPanel>
+                                <RadioButton Margin="4" Name="rbQueryDateModified" GroupName="Query Dates">Modified between</RadioButton>
+                                <TextBox></TextBox>
+                                <TextBox>and</TextBox>
+                                <TextBox></TextBox>
+                            </DockPanel>
+                            <DockPanel>
+                                <RadioButton Margin="4" Name="rbQueryDateCreated" GroupName="Query Dates">Created between</RadioButton>
+                                <TextBox></TextBox>
+                                <TextBox>and</TextBox>
+                                <TextBox></TextBox>
+                            </DockPanel>
+                        </StackPanel>
+                    </GroupBox>
+                    <DockPanel DockPanel.Dock="Top">
+                        <Button Margin="4" Name="btnQueryClear" Click="btnQueryClear_Click">Clear</Button>
+                        <Button Margin="4" Name="btnExecuteQuery" Click="btnExecuteQuery_Click">Execute Query</Button>
+                        <TextBlock/>
+                    </DockPanel>
+                    <TextBlock/>
+                </DockPanel>
+            </GroupBox>
+        </DockPanel>
+<!--        <GroupBox DockPanel.Dock="Top" Header="Experiment">
+            <DockPanel>
+                <Button Margin="4" Name="btnExperimentStatus">Status</Button>
+                <Button Margin="4" Name="btnExperimentSummary">Summary</Button>
+                <Button Margin="4" Name="btnExperimentExport">Export</Button>
+                <Button Margin="4" Name="btnExperimentResults">Results</Button>
+                <Button Margin="4" Name="btnExperimentWizard">Wizard</Button>
+                <TextBlock/>
+            </DockPanel>
+        </GroupBox> -->
+        <TextBox Name="txtMessages" Focusable="True" IsReadOnly="True" VerticalScrollBarVisibility="Auto"></TextBox>
+    </DockPanel>
+</Window>
