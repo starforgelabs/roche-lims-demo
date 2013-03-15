@@ -7,12 +7,12 @@ namespace LIMSDemo
     public class MainController : IMainController
     {
         private string _exportFileName = string.Empty;
-        private readonly LIMSConnection _lims = new LIMSConnection();
+        private readonly LIMSConnection _model = new LIMSConnection();
         private WindowMain _view;
 
         public void AbortRun()
         {
-            if (_lims.AbortExperiment())
+            if (_model.AbortExperiment())
                 Display("Experiment aborted.");
             else
                 DisplayLastStatus();
@@ -22,12 +22,32 @@ namespace LIMSDemo
 
         public void AcquireLibrary()
         {
-            if (_lims.LoadLibrary())
+            if (_model.LoadLibrary())
                 Display("COM Object Loaded.");
             else
                 DisplayLastStatus();
 
             UpdateControls();
+        }
+
+        private DateTime? BuildDate(string aDayText, int aMonthIndex, string
+            aYearText)
+        {
+            int lYear;
+            if (!Int32.TryParse(aYearText, out lYear)) return null;
+            if (lYear < 0) return null;
+            if (lYear < 80) lYear += 2000; else if (lYear < 100) lYear += 1900;
+
+            int lMonth = aMonthIndex + 1;
+            if (lMonth < 1 || lMonth > 12) return null;
+
+            int lDay;
+            if (!Int32.TryParse(aDayText, out lDay)) return null;
+            if (lDay < 1 || lDay > 31) return null;
+
+            if (DateTime.DaysInMonth(lYear, lMonth) < lDay) return null;
+
+            return new DateTime(lYear, lMonth, lDay);
         }
 
         public void ClearQueryParameters()
@@ -42,7 +62,7 @@ namespace LIMSDemo
 
         public void CloseDoor()
         {
-            if (_lims.CloseDoor())
+            if (_model.CloseDoor())
                 Display("Door closed.");
             else
                 DisplayLastStatus();
@@ -67,14 +87,14 @@ namespace LIMSDemo
 
         private void DisplayLastStatus()
         {
-            if (_lims.HasLastResult)
-                Display(_lims.LastResult.Message + "\r\n" + _lims.LastResult.UserMessage);
+            if (_model.HasLastResult)
+                Display(_model.LastResult.Message + "\r\n" + _model.LastResult.UserMessage);
         }
 
         public void ExperimentStatus()
         {
             string lStatus;
-            if (_lims.GetExperimentStatus(ExperimentName, out lStatus))
+            if (_model.GetExperimentStatus(ExperimentName, out lStatus))
             {
                 Display("Experiment Status:");
                 Display(lStatus, false);
@@ -86,7 +106,7 @@ namespace LIMSDemo
         public void ExperimentSummary()
         {
             string lSummary;
-            if (_lims.GetExperimentSummary(ExperimentName, out lSummary))
+            if (_model.GetExperimentSummary(ExperimentName, out lSummary))
             {
                 Display("Experiment Summary:");
                 Display(lSummary, false);
@@ -120,7 +140,7 @@ namespace LIMSDemo
             if (lDialog.ShowDialog() == DialogResult.OK)
             {
                 _exportFileName = lDialog.FileName;
-                if (_lims.ExportExperiment(ExperimentName, _exportFileName))
+                if (_model.ExportExperiment(ExperimentName, _exportFileName))
                     Display("Experiment exported to " + _exportFileName);
                 else
                     DisplayLastStatus();                    
@@ -133,7 +153,7 @@ namespace LIMSDemo
         {
             string lBarcode;
 
-            if (_lims.GetContainerBarcode(out lBarcode))
+            if (_model.GetContainerBarcode(out lBarcode))
                 Display("Container Barcode: " + lBarcode);
             else
             {
@@ -148,7 +168,7 @@ namespace LIMSDemo
         {
             bool lSensor;
 
-            if (_lims.GetContainerSensor(out lSensor))
+            if (_model.GetContainerSensor(out lSensor))
                 Display("Container sensor: " + (lSensor ? "ON" : "OFF"));
             else
             {
@@ -163,7 +183,7 @@ namespace LIMSDemo
         {
             string lStatus;
 
-            if (_lims.GetStatus(out lStatus))
+            if (_model.GetStatus(out lStatus))
                 Display("Status message: " + lStatus);
             else
             {
@@ -178,7 +198,7 @@ namespace LIMSDemo
         {
             if (_view == null) return;
 
-            if (_lims.Connect(_view.txtHostname.Text, _view.txtUsername.Text, _view.txtPassword.Password))
+            if (_model.Connect(_view.txtHostname.Text, _view.txtUsername.Text, _view.txtPassword.Password))
                 Display("Logged in.");
             else
                 DisplayLastStatus();
@@ -188,13 +208,13 @@ namespace LIMSDemo
 
         public void Logout()
         {
-            if (_lims.Disconnect()) Display("Logged out.");
+            if (_model.Disconnect()) Display("Logged out.");
             UpdateControls();
         }
 
         public void OpenDoor()
         {
-            if (_lims.OpenDoor())
+            if (_model.OpenDoor())
                 Display("Door opened.");
             else
                 DisplayLastStatus();
@@ -207,35 +227,63 @@ namespace LIMSDemo
             if (_view == null) return;
 
             LIMSClientLib.LIMSQueryDateType lDateType;
-            var lFromDate = DateTime.MinValue;
-            var lToDate = DateTime.MaxValue;
+            DateTime? lFromDate = null;
+            DateTime? lToDate = null;
 
             if (_view.rbQueryDateAll.IsChecked ?? false)
                 lDateType = LIMSClientLib.LIMSQueryDateType.qdtAllDateQuery;
             else if (_view.rbQueryDateCreated.IsChecked ?? false)
             {
                 lDateType = LIMSClientLib.LIMSQueryDateType.qdtCreationDateQuery;
-                // lFromDate
-                // lToDate
+                lFromDate = BuildDate(_view.cbDateCreatedStartDay.Text, 
+                                      _view.cbDateCreatedStartMonth.SelectedIndex,
+                                      _view.cbDateCreatedStartYear.Text);
+                if (lFromDate == null)
+                {
+                    Display("Could not parse starting date created. Query not run.");
+                    return;
+                }
+                lToDate = BuildDate(_view.cbDateCreatedStopDay.Text, 
+                                    _view.cbDateCreatedStopMonth.SelectedIndex,
+                                    _view.cbDateCreatedStopYear.Text);
+                if (lToDate == null)
+                {
+                    Display("Could not parse ending date created. Query not run.");
+                    return;
+                }
             }
             else
             {
                 lDateType = LIMSClientLib.LIMSQueryDateType.qdtModificationDateQuery;
-                // lFromDate
-                // lToDate
+                lFromDate = BuildDate(_view.cbDateModifiedStartDay.Text, 
+                                      _view.cbDateModifiedStartMonth.SelectedIndex,
+                                      _view.cbDateModifiedStartYear.Text);
+                if (lFromDate == null)
+                {
+                    Display("Could not parse starting date modified. Query not run.");
+                    return;
+                }
+                lToDate = BuildDate(_view.cbDateModifiedStopDay.Text, 
+                                    _view.cbDateModifiedStopMonth.SelectedIndex,
+                                    _view.cbDateModifiedStopYear.Text);
+                if (lToDate == null)
+                {
+                    Display("Could not parse ending date modified. Query not run.");
+                    return;
+                }
             }
 
             List<LIMSConnection.QueryResult> lResults;
 
-            if (_lims.ExecuteQuery(
+            if (_model.ExecuteQuery(
                     new LIMSConnection.QueryParameters
                     {
                         Name = _view.txtQueryName.Text,
                         ObjectType = _view.txtQueryType.Text,
                         Owner = _view.txtQueryOwner.Text,
                         DateType = lDateType,
-                        DateFrom = lFromDate,
-                        DateTo = lToDate
+                        DateFrom = lFromDate ?? DateTime.MaxValue,
+                        DateTo = lToDate ?? DateTime.MaxValue
                     }, out lResults))
             {
                 Display("Query Successful.");
@@ -250,14 +298,14 @@ namespace LIMSDemo
 
         public void ReleaseLibrary()
         {
-            _lims.UnloadLibrary();
+            _model.UnloadLibrary();
             Display("COM object released.");
             UpdateControls();
         }
 
         public void ReserveInstrument()
         {            
-            if (_lims.ReserveInstrument())
+            if (_model.ReserveInstrument())
                 Display("Instrument reserved.");
             else
                 DisplayLastStatus();
@@ -265,13 +313,20 @@ namespace LIMSDemo
             UpdateControls();
         }
 
+        public void Terminate()
+        {
+            _model.UnreserveInstrument();
+            _model.Disconnect();
+            _model.UnloadLibrary();
+        }
+
         public void ToggleSensor()
         {
             bool lSensor;
 
-            if (_lims.GetContainerSensor(out lSensor))
+            if (_model.GetContainerSensor(out lSensor))
             {
-                if (_lims.SetContainerSensor(!lSensor))
+                if (_model.SetContainerSensor(!lSensor))
                     Display("Container sensor value toggled.");
                 else
                 {
@@ -290,7 +345,7 @@ namespace LIMSDemo
 
         public void UnreserveInstrument()
         {
-            if (_lims.UnreserveInstrument())
+            if (_model.UnreserveInstrument())
                 Display("Instrument released.");
             else
                 DisplayLastStatus();
@@ -302,9 +357,9 @@ namespace LIMSDemo
         {
             if (_view == null) return;
                     
-            bool lIsLoaded = _lims.IsLibraryLoaded;
-            bool lIsConnected = _lims.IsConnected;
-            bool lIsResserved = _lims.IsReserved;
+            bool lIsLoaded = _model.IsLibraryLoaded;
+            bool lIsConnected = _model.IsConnected;
+            bool lIsResserved = _model.IsReserved;
 
             // Connection and login boxes
             //

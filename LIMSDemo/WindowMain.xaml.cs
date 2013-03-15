@@ -15,6 +15,11 @@ namespace LIMSDemo
 
         private readonly IMainController _controller;
 
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            _controller.Terminate();
+        }
+
         private void btnAbortRun_Click(object aSender, RoutedEventArgs aEventArgs)
         {
             _controller.AbortRun();

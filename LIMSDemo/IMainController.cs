@@ -39,6 +39,8 @@ namespace LIMSDemo
 
         void ReserveInstrument();
 
+        void Terminate();
+
         void ToggleSensor();
 
         void UnreserveInstrument();
