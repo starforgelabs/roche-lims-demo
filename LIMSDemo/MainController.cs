@@ -4,6 +4,9 @@ using System.Windows.Forms;
 
 namespace LIMSDemo
 {
+    //
+    // This is the heart of the program, the main window's controller.
+    //
     public class MainController : IMainController
     {
         private string _exportFileName = string.Empty;
@@ -13,7 +16,7 @@ namespace LIMSDemo
         public void AbortRun()
         {
             if (_model.AbortExperiment())
-                Display("Experiment aborted.");
+                DisplayMessage("Experiment aborted.");
             else
                 DisplayLastStatus();
 
@@ -23,7 +26,7 @@ namespace LIMSDemo
         public void AcquireLibrary()
         {
             if (_model.LoadLibrary())
-                Display("COM Object Loaded.");
+                DisplayMessage("COM Object Loaded.");
             else
                 DisplayLastStatus();
 
@@ -63,19 +66,27 @@ namespace LIMSDemo
         public void CloseDoor()
         {
             if (_model.CloseDoor())
-                Display("Door closed.");
+                DisplayMessage("Door closed.");
             else
                 DisplayLastStatus();
 
             UpdateControls();
         }
 
-        private void Display(string aMessage)
+        private void DisplayLastStatus()
         {
-            Display(aMessage, true);
+            if (_model.HasLastResult)
+                DisplayMessage(_model.LastResult.Message + "\r\n" + _model.LastResult.UserMessage);
+            else
+                DisplayMessage("No last result information available.");
         }
 
-        private void Display(string aMessage, bool aClearDisplay)
+        private void DisplayMessage(string aMessage)
+        {
+            DisplayMessage(aMessage, true);
+        }
+
+        private void DisplayMessage(string aMessage, bool aClearDisplay)
         {
             if (_view == null) return;
 
@@ -85,21 +96,13 @@ namespace LIMSDemo
                 _view.txtMessages.Text += aMessage + "\r\n";
         }
 
-        private void DisplayLastStatus()
-        {
-            if (_model.HasLastResult)
-                Display(_model.LastResult.Message + "\r\n" + _model.LastResult.UserMessage);
-            else
-                Display("No last result information available.");
-        }
-
         public void ExperimentStatus()
         {
             string lStatus;
             if (_model.GetExperimentStatus(ExperimentName, out lStatus))
             {
-                Display("Experiment Status:");
-                Display(lStatus, false);
+                DisplayMessage("Experiment Status:");
+                DisplayMessage(lStatus, false);
             }
             else
                 DisplayLastStatus();
@@ -110,8 +113,8 @@ namespace LIMSDemo
             string lSummary;
             if (_model.GetExperimentSummary(ExperimentName, out lSummary))
             {
-                Display("Experiment Summary:");
-                Display(lSummary, false);
+                DisplayMessage("Experiment Summary:");
+                DisplayMessage(lSummary, false);
             }
             else
                 DisplayLastStatus();
@@ -143,12 +146,12 @@ namespace LIMSDemo
             {
                 _exportFileName = lDialog.FileName;
                 if (_model.ExportExperiment(ExperimentName, _exportFileName))
-                    Display("Experiment exported to " + _exportFileName);
+                    DisplayMessage("Experiment exported to " + _exportFileName);
                 else
                     DisplayLastStatus();                    
             }
             else
-                Display("Export cancelled.");
+                DisplayMessage("Export cancelled.");
         }
 
         public void GetContainerBarcode()
@@ -156,10 +159,10 @@ namespace LIMSDemo
             string lBarcode;
 
             if (_model.GetContainerBarcode(out lBarcode))
-                Display("Container Barcode: " + lBarcode);
+                DisplayMessage("Container Barcode: " + lBarcode);
             else
             {
-                Display("Failed to obtain container barcode.", false);
+                DisplayMessage("Failed to obtain container barcode.", false);
                 DisplayLastStatus();
             }
 
@@ -171,10 +174,10 @@ namespace LIMSDemo
             bool lSensor;
 
             if (_model.GetContainerSensor(out lSensor))
-                Display("Container sensor: " + (lSensor ? "ON" : "OFF"));
+                DisplayMessage("Container sensor: " + (lSensor ? "ON" : "OFF"));
             else
             {
-                Display("Failed to obtain sensor value.", false);
+                DisplayMessage("Failed to obtain sensor value.", false);
                 DisplayLastStatus();
             }
 
@@ -186,10 +189,10 @@ namespace LIMSDemo
             string lStatus;
 
             if (_model.GetStatus(out lStatus))
-                Display("Status message: " + lStatus);
+                DisplayMessage("Status message: " + lStatus);
             else
             {
-                Display("Failed to obtain status message.", false);
+                DisplayMessage("Failed to obtain status message.", false);
                 DisplayLastStatus();
             }
 
@@ -201,7 +204,7 @@ namespace LIMSDemo
             if (_view == null) return;
 
             if (_model.Connect(_view.txtHostname.Text, _view.txtUsername.Text, _view.txtPassword.Password))
-                Display("Logged in.");
+                DisplayMessage("Logged in.");
             else
                 DisplayLastStatus();
 
@@ -210,14 +213,14 @@ namespace LIMSDemo
 
         public void Logout()
         {
-            if (_model.Disconnect()) Display("Logged out.");
+            if (_model.Disconnect()) DisplayMessage("Logged out.");
             UpdateControls();
         }
 
         public void OpenDoor()
         {
             if (_model.OpenDoor())
-                Display("Door opened.");
+                DisplayMessage("Door opened.");
             else
                 DisplayLastStatus();
 
@@ -242,7 +245,7 @@ namespace LIMSDemo
                                       _view.cbDateCreatedStartYear.Text);
                 if (lFromDate == null)
                 {
-                    Display("Could not parse starting date created. Query not run.");
+                    DisplayMessage("Could not parse starting date created. Query not run.");
                     return;
                 }
                 lToDate = BuildDate(_view.cbDateCreatedStopDay.Text, 
@@ -250,7 +253,7 @@ namespace LIMSDemo
                                     _view.cbDateCreatedStopYear.Text);
                 if (lToDate == null)
                 {
-                    Display("Could not parse ending date created. Query not run.");
+                    DisplayMessage("Could not parse ending date created. Query not run.");
                     return;
                 }
             }
@@ -262,7 +265,7 @@ namespace LIMSDemo
                                       _view.cbDateModifiedStartYear.Text);
                 if (lFromDate == null)
                 {
-                    Display("Could not parse starting date modified. Query not run.");
+                    DisplayMessage("Could not parse starting date modified. Query not run.");
                     return;
                 }
                 lToDate = BuildDate(_view.cbDateModifiedStopDay.Text, 
@@ -270,7 +273,7 @@ namespace LIMSDemo
                                     _view.cbDateModifiedStopYear.Text);
                 if (lToDate == null)
                 {
-                    Display("Could not parse ending date modified. Query not run.");
+                    DisplayMessage("Could not parse ending date modified. Query not run.");
                     return;
                 }
             }
@@ -288,10 +291,10 @@ namespace LIMSDemo
                         DateTo = lToDate ?? DateTime.MaxValue
                     }, out lResults))
             {
-                Display("Query Successful.");
+                DisplayMessage("Query Successful.");
 
                 foreach (var i in lResults)
-                    Display(string.Format("  Name: '{0}' Path: '{1}' Type: '{2}' Created: {3} Modified: {4}",
+                    DisplayMessage(string.Format("  Name: '{0}' Path: '{1}' Type: '{2}' Created: {3} Modified: {4}",
                         i.Name, i.Path, i.ObjectType, i.Created, i.Modified), false);
             }
             else
@@ -301,14 +304,14 @@ namespace LIMSDemo
         public void ReleaseLibrary()
         {
             _model.UnloadLibrary();
-            Display("COM object released.");
+            DisplayMessage("COM object released.");
             UpdateControls();
         }
 
         public void ReserveInstrument()
         {            
             if (_model.ReserveInstrument())
-                Display("Instrument reserved.");
+                DisplayMessage("Instrument reserved.");
             else
                 DisplayLastStatus();
 
@@ -319,7 +322,7 @@ namespace LIMSDemo
         {
             if (!_model.IsReserved)
             {
-                Display("Instrument must be reserved first.");
+                DisplayMessage("Instrument must be reserved first.");
                 return;
             }
 
@@ -328,7 +331,7 @@ namespace LIMSDemo
             if (!lNewExperimentController.GetMinimalNewExperiment(out lNewExperiment)) return;
 
             if (_model.StartRun(lNewExperiment))
-                Display("Request to start a new run successful.");
+                DisplayMessage("Request to start a new run successful.");
             else
                 DisplayLastStatus();
         }
@@ -347,16 +350,16 @@ namespace LIMSDemo
             if (_model.GetContainerSensor(out lSensor))
             {
                 if (_model.SetContainerSensor(!lSensor))
-                    Display("Container sensor value toggled.");
+                    DisplayMessage("Container sensor value toggled.");
                 else
                 {
-                    Display("Failed to set new container sensor value.", false);
+                    DisplayMessage("Failed to set new container sensor value.", false);
                     DisplayLastStatus();
                 }
             }
             else
             {
-                Display("Failed to read container sensor value.", false);
+                DisplayMessage("Failed to read container sensor value.", false);
                 DisplayLastStatus();
             }
 
@@ -366,7 +369,7 @@ namespace LIMSDemo
         public void UnreserveInstrument()
         {
             if (_model.UnreserveInstrument())
-                Display("Instrument released.");
+                DisplayMessage("Instrument released.");
             else
                 DisplayLastStatus();
 
