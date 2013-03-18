@@ -2,6 +2,11 @@
 
 namespace LIMSDemo
 {
+    //
+    // This is the controller for getting minimal run information from a user.
+    //
+    // It's created by the main controller, which then calls GetMinimalNewExperiment().
+    //
     public class NewRunController : INewRunController
     {
         public NewRunController(Window aMainView)

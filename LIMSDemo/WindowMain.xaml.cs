@@ -3,13 +3,21 @@
 namespace LIMSDemo
 {
     /// <summary>
-    /// Interaction logic for WindowMain.xaml
+    /// This is the main window. 
+    /// 
+    /// This uses a more proper MVC paradigm, so the window delegates all window
+    /// manipulation to its controller. It does not modify itself.
     /// </summary>
     public partial class WindowMain
     {
         public WindowMain()
         {
             InitializeComponent();
+
+            // Technically the view shouldn't own the controller. 
+            // This is a bit of slacking on my part because this is the main window,
+            // and it's not worth rewiring Microsoft's default app startup sequence
+            // to be 100% pure MVC. 
             _controller = new MainController {View = this};
         }
 

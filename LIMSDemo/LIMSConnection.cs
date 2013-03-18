@@ -3,6 +3,12 @@ using LIMSClientLib;
 
 namespace LIMSDemo
 {
+    //
+    // This provides a thin wrapper around the LIMS COM object.
+    //
+    // Many of the commands return a boolean success/failure, with
+    // more detailed information in LastResult.
+    //
     public class LIMSConnection
     {
         public struct QueryParameters

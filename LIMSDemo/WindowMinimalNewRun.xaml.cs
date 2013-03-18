@@ -1,7 +1,10 @@
 ﻿namespace LIMSDemo
 {
     /// <summary>
-    /// Interaction logic for WindowMinimalNewRun.xaml
+    /// This window is for collecting minimal information needed for a run. 
+    /// 
+    /// This uses a proper MVC paradigm, so the window delegates all window
+    /// manipulation to its controller. It does not modify itself.
     /// </summary>
     public partial class WindowMinimalNewRun
     {
